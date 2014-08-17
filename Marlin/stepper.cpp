@@ -39,6 +39,9 @@
 //===========================================================================
 block_t *current_block;  // A pointer to the block currently being traced
 
+// Stuff for counting steps
+volatile static unsigned long step_x_completed = 0;
+volatile static unsigned long step_y_completed = 0;
 
 //===========================================================================
 //=============================private variables ============================
@@ -575,6 +578,7 @@ ISR(TIMER1_COMPA_vect)
           WRITE(X_STEP_PIN, !INVERT_X_STEP_PIN);
         #endif        
           counter_x -= current_block->step_event_count;
+		  ++step_x_completed;
           count_position[X_AXIS]+=count_direction[X_AXIS];   
         #ifdef DUAL_X_CARRIAGE
           if (extruder_duplication_enabled){
@@ -601,6 +605,7 @@ ISR(TIMER1_COMPA_vect)
 		  #endif
 		  
           counter_y -= current_block->step_event_count;
+		  ++step_y_completed;
           count_position[Y_AXIS]+=count_direction[Y_AXIS];
           WRITE(Y_STEP_PIN, INVERT_Y_STEP_PIN);
 		  
